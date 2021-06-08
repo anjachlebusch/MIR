@@ -1,6 +1,6 @@
 from preprocessing import get_images_paths
 import query
-from irma_code import IRMA
+from irma_code_exercise import IRMA
 
 import cv2
 import sys
@@ -11,7 +11,23 @@ import os
 from tqdm import tqdm
 
 
-def count_codes(code_path = "irma_data/image_codes.csv"): 
+def count_codes(code_path ='static/Irma data-20210525/image_codes.csv'): 
+    if Path(code_path).exists() == False:
+        print('Incorrect or not defined Path')
+        return ("error")
+    else: 
+        dict={}
+        f=open(code_path, "r")
+        with f:
+            reader=csv.reader(f)
+            for row in reader:
+                if row[1] in dict.keys():
+                    dict[row[1]]=dict[row[1]]+1
+                else:
+                    dict[row[1]]=1
+        return dict
+              
+    
     """
     Counts the occurrence of each code in the given "CSV" file.
 
@@ -34,10 +50,23 @@ def count_codes(code_path = "irma_data/image_codes.csv"):
         - Return results
     """
     # TODO:
-    pass
+
 
 
 def precision_at_k(correct_prediction_list, k = None):
+    if k==None:
+        k==len(correct_prediction_list)
+    elif k>len(correct_prediction_list):
+        return("error")
+    else:
+        correct_prediction_list=correct_prediction_list[0:k]
+    tp=0
+    for i in correct_prediction_list:
+        if i ==True:
+            tp=tp+1
+    return tp/k
+
+    
     """
     Function to calculate the precision@k.
 
@@ -67,9 +96,15 @@ def precision_at_k(correct_prediction_list, k = None):
         >>> P@K:  1.0
     """
     #TODO:
-    pass
 
 def average_precision(correct_prediction_list, amount_relevant= None):
+    if amount_relevant==None:
+        amount_relevant=len(correct_prediction_list)
+    else:
+        for element in range(len(correct_prediction_list)):
+            
+
+
     """
     Function to calculate the average precision.
 
