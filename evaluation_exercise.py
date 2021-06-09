@@ -1,5 +1,5 @@
 from preprocessing import get_images_paths
-import query
+from query import Query
 from irma_code_exercise import IRMA
 
 import cv2
@@ -21,10 +21,11 @@ def count_codes(code_path ='static/Irma data-20210525/image_codes.csv'):
         with f:
             reader=csv.reader(f)
             for row in reader:
-                if row[1] in dict.keys():
-                    dict[row[1]]=dict[row[1]]+1
+                code= row[0].split(";")[1]
+                if code in dict.keys():
+                    dict[code]=dict[code]+1
                 else:
-                    dict[row[1]]=1
+                    dict[code]=1
         return dict
               
     
@@ -56,7 +57,6 @@ def count_codes(code_path ='static/Irma data-20210525/image_codes.csv'):
 def precision_at_k(correct_prediction_list, k = None):
     if k==None:
         k=len(correct_prediction_list)
-        print(k)
     elif k>len(correct_prediction_list):
         return("error")
     else:
@@ -69,7 +69,8 @@ def precision_at_k(correct_prediction_list, k = None):
     for element in correct_prediction_list:
         if element == True:
             tp=tp+1
-            print(tp)
+            print("True Positive: " +str(tp))
+    print("K: "+str(k))        
     return tp/k
 
     
@@ -108,8 +109,9 @@ def average_precision(correct_prediction_list, amount_relevant= None):
         amount_relevant=len(correct_prediction_list)
 
     sum=0
-    for k in range(1,len(correct_prediction_list)):
-        sum=sum+precision_at_k(correct_prediction_list,k)
+    for k in range(0,len(correct_prediction_list)):
+        if correct_prediction_list[k]==True:
+            sum=sum+precision_at_k(correct_prediction_list,k+1)
     return sum/amount_relevant
     
 
@@ -149,6 +151,41 @@ def average_precision(correct_prediction_list, amount_relevant= None):
 
 def mean_average_precision(limit = 10000):
     irma=IRMA()
+    database_irma_count=count_codes()
+    ap_list=[]
+
+    f=open('outputresults.csv', "r")
+    i=0
+    
+    with f:
+        reader=csv.reader(f)
+        for row in reader:   
+            if i<20:
+                image_names=[]
+                correct_prediction_list=[]
+                print("img Path: "+ row[0])
+                query=Query('outputresults.csv')
+                print(row[0].split("\\")[-1])
+                query.set_image_name(row[0].split("\\")[-1])
+                query=query.run()
+                for element in tqdm(np.asarray(query)):
+                    print(element[0].split('\\')[-1])
+                    image_names.append(element[0].split('\\')[-1])
+
+                irma_list=irma.get_irma(image_names)
+                selected_image_irma=irma_list.pop(0)
+                for element in irma_list:
+                    if element==selected_image_irma:
+                        correct_prediction_list.append(True)
+                    else:
+                        correct_prediction_list.append(False)
+                ap_list.append(average_precision(correct_prediction_list,database_irma_count[selected_image_irma]))
+                i=i+1
+    f.close()
+    
+    return sum(ap_list)/len(ap_list)
+    
+    
     """
     Function to calcualte the mean average precision of the database.
 

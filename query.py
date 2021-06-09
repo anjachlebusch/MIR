@@ -30,7 +30,7 @@ class Query:
         if query_image_name!=self.query_image_name:
             self.results=None
             self.query_image_name=query_image_name
-            self.query_image=cv2.imread('static/images/query/'+query_image_name,cv2.IMREAD_GRAYSCALE)
+            self.query_image=cv2.imread('imageclef2007med_training/' +query_image_name,cv2.IMREAD_GRAYSCALE)
            # print(self.query_image)
             self.calculate_features()
            # print(self.features)

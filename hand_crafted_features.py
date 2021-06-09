@@ -250,7 +250,7 @@ class hand_crafted_features:
 if __name__ == '__main__':
     # Read the test image
     # TODO: You can change the image path here:
-    example_image = cv2.imread(r"C:\Users\User\Documents\MIR\3145.png", cv2.IMREAD_GRAYSCALE)
+    example_image = cv2.imread('3145.png', cv2.IMREAD_GRAYSCALE)
 
     # Assert image read was successful
     #assert example_image is not None
