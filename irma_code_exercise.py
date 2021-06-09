@@ -74,7 +74,7 @@ class IRMA:
     labels_long = ["Technical code for imaging modality", "Directional code for imaging orientation", "Anatomical code for body region examined", "Biological code for system examined"]
     labels_short = ["Imaging modality", "Imaging orientation", "Body region", "System"]
 
-    def __init__(self, dir_path= r"C:\Users\User\Documents\MIR\static\Irma data-20210525"):
+    def __init__(self, dir_path= 'static/Irma data-20210525'):
     
         """
         Constructor of an IRMA element.

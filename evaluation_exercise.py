@@ -149,7 +149,6 @@ def average_precision(correct_prediction_list, amount_relevant= None):
 
 def mean_average_precision(limit = 10000):
     irma=IRMA()
-    
     """
     Function to calcualte the mean average precision of the database.
 
