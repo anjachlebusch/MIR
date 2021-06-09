@@ -55,15 +55,21 @@ def count_codes(code_path ='static/Irma data-20210525/image_codes.csv'):
 
 def precision_at_k(correct_prediction_list, k = None):
     if k==None:
-        k==len(correct_prediction_list)
+        k=len(correct_prediction_list)
+        print(k)
     elif k>len(correct_prediction_list):
         return("error")
     else:
         correct_prediction_list=correct_prediction_list[0:k]
+        
+        
+
+    print(correct_prediction_list)
     tp=0
-    for i in correct_prediction_list:
-        if i ==True:
+    for element in correct_prediction_list:
+        if element == True:
             tp=tp+1
+            print(tp)
     return tp/k
 
     
@@ -95,13 +101,18 @@ def precision_at_k(correct_prediction_list, k = None):
         print("P@K: ", precision_at_k([True, True, True, False], 2))
         >>> P@K:  1.0
     """
-    #TODO:
+   
 
 def average_precision(correct_prediction_list, amount_relevant= None):
     if amount_relevant==None:
         amount_relevant=len(correct_prediction_list)
-    else:
-        for element in range(len(correct_prediction_list)):
+
+    sum=0
+    for k in range(1,len(correct_prediction_list)):
+        sum=sum+precision_at_k(correct_prediction_list,k)
+    return sum/amount_relevant
+    
+
             
 
 
@@ -133,10 +144,12 @@ def average_precision(correct_prediction_list, amount_relevant= None):
         print("AveP: ", average_precision([True, True, False, True], 3))
         >>> AveP:  0.9166666666666666
     """
-    #TODO:
-    pass
+
+  
 
 def mean_average_precision(limit = 10000):
+    irma=IRMA()
+    
     """
     Function to calcualte the mean average precision of the database.
 
@@ -163,9 +176,9 @@ def mean_average_precision(limit = 10000):
     pass
 
 if __name__ == "__main__":
-    test = [True, False, True, False]
+    test = [True, True, False,True]
     print("Examples with query results: ", str(test)) 
-    print("P@K: ", precision_at_k(test, 3))
+    print("P@K: ", precision_at_k(test,3))
     print("AveP: ", average_precision(test, 3))
 
     result = mean_average_precision()
