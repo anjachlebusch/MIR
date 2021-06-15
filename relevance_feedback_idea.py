@@ -1,5 +1,6 @@
 from cv2 import cv2
 import csv
+from query import Query
 def relevance_feedback(self, selected_images, not_selected_images, limit):
     """
     Function to start a relevance feedback query.
@@ -18,10 +19,23 @@ def relevance_feedback(self, selected_images, not_selected_images, limit):
     """
     relevant_feature=get_feature_vector(selected_images)
     non_relevant=get_feature_vector(not_selected_images)
-    
+
+    f=open('selectedOutput.csv',"w")
+    with f:
+        writer=csv.writer(f)
+        for i in range(len(selected_images)):
+            writer.writerow(selected_images[i]+";"+relevant_feature[0])
+    f.close
+
     modified_features=rocchio(self.query.features,relevant_feature,non_relevant)
-    self.query_features=modified_features
+
+
+    
+
+    query=Query("selectedOutput.csv")
+    query.set_image_name(self.selected_image)
     self.feeback_result=self.query.run()
+    
     return self.feeback_result[0:limit]
     
 
@@ -102,7 +116,9 @@ def rocchio(original_query, relevant, non_relevant, a = 1, b = 0.8, c = 0.1):
     for element in non_relevant:
         sum_nr=[i + j for i, j in zip(sum_nr, element)]
     vector_c=[c*(1/len(non_relevant))*i for i in sum_nr]
-
+    
+   # for i,j,k in zip(vector_a,vector_b,vector_c):
+    #    features.append(i+j-k)
     features=[i + j - k for i, j, k in zip(vector_a,vector_b,vector_c)]
 
     return features

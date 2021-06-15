@@ -95,16 +95,36 @@ def new_page():
 @app.route('/relevance_feedback', methods=['POST', 'GET'])
 def relevance_feedback():
     global feeback_result
-
-    # POST request
+    global query
     if request.method == 'POST':
-
+        selected_images, not_selected_images=request.form["selected_images, not_selected_images"]
+        for element in selected_images:
+            print("Selected Image: "+element)
+        for element in not_selected_images:
+            print("Not selected Image: "+element)
+        
+    
         # TODO:
-        pass
+        
 
 
     if request.method == 'GET':
+        selected_images, not_selected_images=request.form.get("selected_images"),request.form.get("not_selected_images")
+        print("Selected Image: ",selected_images)
+        print("Länge Selectes Images: "+len(selected_images))
+
+        for element in selected_images:
+            print("Selected Image: ",element)
+        for element in not_selected_images:
+            print("Not selected Image: ",element)
+        
+        
+        feeback_result= relevance_feedback(selected_images,not_selected_images,10)
         return visualize_query(feeback_result)
+
+
+    #if request.method == 'GET':
+     #   return visualize_query(feeback_result)
 
 if __name__ == "__main__":
     app.run(port=4555, debug=True)

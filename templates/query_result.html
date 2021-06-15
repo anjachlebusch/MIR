@@ -69,7 +69,7 @@
     <div class="col-">
       <div class="text-right" style="position: fixed">
         <button type="submit" class="btn btn-primary" id="relevance_feedback"
-          onclick="activate_spinner(this);relevance_feedback()" style="visibility:hidden">Relevance feedback!</button>
+          onclick="activate_spinner(this);relevance_feedback()" style="visibility:visible">Relevance feedback!</button>
       </div>
     </div>
   </div>
@@ -92,9 +92,17 @@
 
 
   function relevance_feedback() {
+    selected_divs=document.getElementsByClassName("selected")
+    for (i=0;i<selected_divs.length;i++){
+      selected_images.push(selected_divs[i].innerHTML)
+      alert(selected_divs[i].innerHTML)
+    }
+    for (i=0;i<selected_divs.length;i++){
+      not_selected_images.push(selected_divs[i].innerHTML)
+    }
     fetch('/relevance_feedback', {
-
-      // TODO:
+      selected_images,
+      not_selected_images
     });
   }
 
