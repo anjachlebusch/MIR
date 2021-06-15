@@ -1,7 +1,7 @@
 from cv2 import cv2
 import csv
 from query import Query
-def relevance_feedback(self, selected_images, not_selected_images, limit):
+def relevance_feedback(self, selected_images, not_selected_images, limit=10):
     """
     Function to start a relevance feedback query.
     Parameters
@@ -17,26 +17,28 @@ def relevance_feedback(self, selected_images, not_selected_images, limit):
     - results : list
         List with the 'limit' first elements of the 'results' list. 
     """
-    relevant_feature=get_feature_vector(selected_images)
-    non_relevant=get_feature_vector(not_selected_images)
+    relevant_feature=get_feature_vector(self,selected_images)
+    non_relevant=get_feature_vector(self,not_selected_images)
 
     f=open('selectedOutput.csv',"w")
     with f:
         writer=csv.writer(f)
         for i in range(len(selected_images)):
-            writer.writerow(selected_images[i]+";"+relevant_feature[0])
+            relevant_featureStr= ','.join(map(str, relevant_feature))
+            writer.writerow(selected_images[i]+";"+relevant_featureStr)
     f.close
 
-    modified_features=rocchio(self.query.features,relevant_feature,non_relevant)
+    modified_features=rocchio(self.features,relevant_feature,non_relevant)
 
 
     
 
     query=Query("selectedOutput.csv")
-    query.set_image_name(self.selected_image)
-    self.feeback_result=self.query.run()
+    query.set_image_name(self.query_image_name)
+    self.features=modified_features
+    result=query.run()
     
-    return self.feeback_result[0:limit]
+    return result[0:limit]
     
 
     # get relavent and non_revant feature vectors
@@ -63,7 +65,7 @@ def get_feature_vector(self, image_names):
     """
     data=[]
     features=[]
-    f = open('static/index.csv', "r")
+    f = open('outputresults.csv', "r")
     with f:
         reader=csv.reader(f)
         for row in reader:
@@ -72,9 +74,15 @@ def get_feature_vector(self, image_names):
 
     for name in image_names:
         for images in data:
-            if ((images[0].split('\\'))[1]==name):
-               # path=images.pop(images[0])
-                features.append(images[-1])
+            featureListFl=[]
+            print(images[0])
+            
+            if ((images[0].split('\\'))[-1]==name):
+                path=images.pop(0)
+
+                for element in images:
+                    element=float(element)
+                features.append(images)
     return features
 
 

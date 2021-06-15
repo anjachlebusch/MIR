@@ -93,18 +93,39 @@
 
   function relevance_feedback() {
     selected_divs=document.getElementsByClassName("selected")
+    not_selected_divs=document.getElementsByClassName("notSelected")
+    selected_images=""
+    not_selected_images=""
+
+
     for (i=0;i<selected_divs.length;i++){
-      selected_images.push(selected_divs[i].innerHTML)
-      alert(selected_divs[i].innerHTML)
+      imageName=selected_divs[i].innerHTML.split("/")[6].split('"')[0];
+      
+      selected_images=selected_images+imageName+";"
+      
+      alert("Selected Images: " + imageName);
+      alert("selected Liste: "+selected_images);
     }
-    for (i=0;i<selected_divs.length;i++){
-      not_selected_images.push(selected_divs[i].innerHTML)
+
+    for (i=0;i<not_selected_divs.length;i++){
+      imageName=not_selected_divs[i].innerHTML.split("/")[6].split('"')[0];
+      not_selected_images=not_selected_images+imageName+";"
+      alert("Not selected Images: " + imageName)
     }
+    let lists={
+      "si" :selected_images,
+      "nsi":not_selected_images
+    };
     fetch('/relevance_feedback', {
-      selected_images,
-      not_selected_images
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(lists)
+
     });
   }
+  
 
   // function which is called when you're at the bottom of the page
   window.onscroll = function (ev) {

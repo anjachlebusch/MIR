@@ -5,6 +5,8 @@ from werkzeug.utils import secure_filename
 from preprocessing import preprocessing_main
 from query import Query
 from irma_code_exercise import IRMA
+from relevance_feedback_idea import relevance_feedback
+import relevance_feedback_idea
 
 """
 This is the main file to run the medical information retrieval server.
@@ -97,34 +99,36 @@ def relevance_feedback():
     global feeback_result
     global query
     if request.method == 'POST':
-        selected_images, not_selected_images=request.form["selected_images, not_selected_images"]
-        for element in selected_images:
-            print("Selected Image: "+element)
-        for element in not_selected_images:
-            print("Not selected Image: "+element)
+        data=request.get_json()
+        print(data)
         
-    
-        # TODO:
-        
+        selected_images=data['si'].split(";")
+        selected_images=selected_images[0:-1]
+
+        not_selected_images=data['nsi'].split(";")
+        not_selected_images=not_selected_images[0:-1]
 
 
-    if request.method == 'GET':
-        selected_images, not_selected_images=request.form.get("selected_images"),request.form.get("not_selected_images")
-        print("Selected Image: ",selected_images)
-        print("Länge Selectes Images: "+len(selected_images))
+       # selected_images,not_selected_images=request.form["si"],request.form["nsi"]
+        #data=request.form.get("lists")
+        
+        #selected_images, not_selected_images=request.form.get("selected_images"),request.form.get("not_selected_images")
+        print("Selected Images: ",selected_images)
+        print("Not selected Images: ",not_selected_images)
 
-        for element in selected_images:
-            print("Selected Image: ",element)
-        for element in not_selected_images:
-            print("Not selected Image: ",element)
+
+        #for element in selected_images:
+         #   print("Selected Image: ",element)
+        #for element in not_selected_images:
+         #   print("Not selected Image: ",element)
         
         
-        feeback_result= relevance_feedback(selected_images,not_selected_images,10)
+        feeback_result= relevance_feedback_idea.relevance_feedback(query,selected_images,not_selected_images)
         return visualize_query(feeback_result)
 
 
-    #if request.method == 'GET':
-     #   return visualize_query(feeback_result)
+    if request.method == 'GET':
+        return visualize_query(feeback_result)
 
 if __name__ == "__main__":
     app.run(port=4555, debug=True)
