@@ -20,12 +20,14 @@ def relevance_feedback(self, selected_images, not_selected_images, limit=10):
     relevant_feature=get_feature_vector(self,selected_images)
     non_relevant=get_feature_vector(self,not_selected_images)
 
-    f=open('selectedOutput.csv',"w")
+    f=open('selectedOutput.csv',"w",newline='')
     with f:
         writer=csv.writer(f)
-        for i in range(len(selected_images)):
-            relevant_featureStr= ','.join(map(str, relevant_feature))
-            writer.writerow(selected_images[i]+";"+relevant_featureStr)
+        j=0
+        for i in relevant_feature:
+         #   relevant_featureStr= ''.join(map(str, relevant_feature))
+            writer.writerow([str(selected_images[j])] + [str(x) for x in i])
+            j=j+1
     f.close
 
     modified_features=rocchio(self.features,relevant_feature,non_relevant)
@@ -35,9 +37,12 @@ def relevance_feedback(self, selected_images, not_selected_images, limit=10):
 
     query=Query("selectedOutput.csv")
     query.set_image_name(self.query_image_name)
-    self.features=modified_features
+
     result=query.run()
-    
+        
+    query.features=modified_features
+    self.features=modified_features
+
     return result[0:limit]
     
 

@@ -64,7 +64,7 @@ def visualize_query(query_result):
     for element in query_result:
         print(element)
         image_path=element[0].split("\\")
-        image_names.append(image_path[1])
+        image_names.append(image_path[-1])
         image_distances.append(element[1])
         print(irma.get_irma(image_names))
         image_codes=irma.get_irma(image_names)
