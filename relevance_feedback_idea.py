@@ -20,6 +20,9 @@ def relevance_feedback(self, selected_images, not_selected_images, limit=10):
     relevant_feature=get_feature_vector(self,selected_images)
     non_relevant=get_feature_vector(self,not_selected_images)
 
+
+    modified_features=rocchio(self.features,relevant_feature,non_relevant)
+
     f=open('selectedOutput.csv',"w",newline='')
     with f:
         writer=csv.writer(f)
@@ -30,7 +33,7 @@ def relevance_feedback(self, selected_images, not_selected_images, limit=10):
             j=j+1
     f.close
 
-    modified_features=rocchio(self.features,relevant_feature,non_relevant)
+    
 
 
     
@@ -83,11 +86,13 @@ def get_feature_vector(self, image_names):
             print(images[0])
             
             if ((images[0].split('\\'))[-1]==name):
-                path=images.pop(0)
+                tempIm=images[1:]
 
-                for element in images:
-                    element=float(element)
-                features.append(images)
+                for i in range(len(tempIm)):
+                    tempIm[i]=float(tempIm[i])
+                features.append(tempIm)
+    print(type(features[1]))
+    print (features[1])
     return features
 
 
@@ -118,20 +123,47 @@ def rocchio(original_query, relevant, non_relevant, a = 1, b = 0.8, c = 0.1):
     features=[]
     sum_r=[]
     sum_nr=[]
+    vector_c=[]
+    vector_b=[]
+    vector_a=[]
+    
 
-    vector_a=a*original_query
+    for element in original_query:
+        vector_a.append(element*a)
 
     for element in relevant:
-        sum_r=[i + j for i, j in zip(sum_r, element)]
-    vector_b=[b*(1/len(relevant))*i for i in sum_r]   
+        if len(sum_r)==0:
+                sum_r=element
+        else:
+            for j in range(len(element)):
+                sum_r[j]=sum_r[j]+element[j]
+       
+    for i in range(len(sum_r)):
+        print("Typ von b: ",type(b))
+        print("typ Len: ",type(len(relevant)))
+        print("Summe: ",type(sum_r[i]))
+        vector_b.append(b/len(relevant)*float(sum_r[i]))
+        
+      
 
     
     for element in non_relevant:
-        sum_nr=[i + j for i, j in zip(sum_nr, element)]
-    vector_c=[c*(1/len(non_relevant))*i for i in sum_nr]
+        if len(sum_nr)==0:
+            sum_nr=element
+        else:
+            for j in range(len(element)):
+                sum_nr[j]=sum_nr[j]+element[j]
     
-   # for i,j,k in zip(vector_a,vector_b,vector_c):
+    for i in range(len(sum_nr)):
+        vector_c.append(c/len(non_relevant)*sum_nr[i])
+
+    
+    for i,j,k in zip(vector_a,vector_b,vector_c):
+        features.append(i+j-k)
     #    features.append(i+j-k)
-    features=[i + j - k for i, j, k in zip(vector_a,vector_b,vector_c)]
+   # features=[i + j - k for i, j, k in zip(vector_a,vector_b,vector_c)]
+    print(type(features))
+    print(len(features))
+    print(features)
 
     return features
