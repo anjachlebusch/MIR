@@ -122,8 +122,17 @@
       'Content-Type': 'application/json'
       },
       body: JSON.stringify(lists)
-
-    });
+    })
+    .then(function(response){
+      if(!resonse.ok){
+        throw Error(response.statusText);}
+        return response})
+    .then(function(response){window.location.href='/relevance_feedback';})
+    
+    
+   
+    
+    
   }
   
 

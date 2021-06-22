@@ -124,7 +124,11 @@ def relevance_feedback():
         
         
         feeback_result= relevance_feedback_idea.relevance_feedback(query,selected_images,not_selected_images)
-        return visualize_query(feeback_result)
+ 
+        #return jsonify(message)
+        #return 
+        #request.Response("/relevance_feedback")
+        return 'response',200 
 
 
     if request.method == 'GET':
