@@ -124,10 +124,11 @@
       body: JSON.stringify(lists)
     })
     .then(function(response){
-      if(!resonse.ok){
+      console.log("r1", response);
+      if(!response.ok){
         throw Error(response.statusText);}
         return response})
-    .then(function(response){window.location.href='/relevance_feedback';})
+    .then(function(response){console.log("r2", response);window.location.href='/relevance_feedback';})
     
     
    
