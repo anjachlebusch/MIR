@@ -184,6 +184,8 @@ class Searcher:
                      dic[key]= distance
             f.close()
             sortedDict = sorted(dic.items(), key=lambda x: x[1])
+
+            
             return sortedDict
 
         """

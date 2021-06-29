@@ -1,6 +1,7 @@
 from cv2 import cv2
 import csv
 from query import Query
+from searcher import Searcher
 def relevance_feedback(self, selected_images, not_selected_images, limit=10):
     """
     Function to start a relevance feedback query.
@@ -23,30 +24,10 @@ def relevance_feedback(self, selected_images, not_selected_images, limit=10):
 
     modified_features=rocchio(self.features,relevant_feature,non_relevant)
 
-    f=open('selectedOutput.csv',"w",newline='')
-    with f:
-        writer=csv.writer(f)
-        j=0
-        for i in relevant_feature:
-         #   relevant_featureStr= ''.join(map(str, relevant_feature))
-            writer.writerow([str(selected_images[j])] + [str(x) for x in i])
-            j=j+1
-    f.close
+    searcher=Searcher("outputresults.csv")
+    results=searcher.search(modified_features)
 
-    
-
-
-    
-
-    query=Query("selectedOutput.csv")
-    query.set_image_name(self.query_image_name)
-
-    result=query.run()
-        
-    query.features=modified_features
-    self.features=modified_features
-
-    return result[0:limit]
+    return results[0:limit]
     
 
     # get relavent and non_revant feature vectors
@@ -80,10 +61,9 @@ def get_feature_vector(self, image_names):
             data.append(row)
     f.close()
 
+    #get the features of the images in the image_names list from the csv file
     for name in image_names:
         for images in data:
-            featureListFl=[]
-            print(images[0])
             
             if ((images[0].split('\\'))[-1]==name):
                 tempIm=images[1:]
@@ -91,8 +71,6 @@ def get_feature_vector(self, image_names):
                 for i in range(len(tempIm)):
                     tempIm[i]=float(tempIm[i])
                 features.append(tempIm)
-    print(type(features[1]))
-    print (features[1])
     return features
 
 
@@ -139,9 +117,6 @@ def rocchio(original_query, relevant, non_relevant, a = 1, b = 0.8, c = 0.1):
                 sum_r[j]=sum_r[j]+element[j]
        
     for i in range(len(sum_r)):
-        print("Typ von b: ",type(b))
-        print("typ Len: ",type(len(relevant)))
-        print("Summe: ",type(sum_r[i]))
         vector_b.append(b/len(relevant)*float(sum_r[i]))
         
       
@@ -160,10 +135,5 @@ def rocchio(original_query, relevant, non_relevant, a = 1, b = 0.8, c = 0.1):
     
     for i,j,k in zip(vector_a,vector_b,vector_c):
         features.append(i+j-k)
-    #    features.append(i+j-k)
-   # features=[i + j - k for i, j, k in zip(vector_a,vector_b,vector_c)]
-    print(type(features))
-    print(len(features))
-    print(features)
 
     return features

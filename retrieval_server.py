@@ -59,25 +59,20 @@ def visualize_query(query_result):
     image_distances=[]
     image_codes=[]
     irma_infos=[]
-    input_code= "hi"
-    input_info= "hallo"
+
     for element in query_result:
-        print(element)
         image_path=element[0].split("\\")
         image_names.append(image_path[-1])
         image_distances.append(element[1])
-        print(irma.get_irma(image_names))
         image_codes=irma.get_irma(image_names)
         for i in range(len(image_codes)):
             code = image_codes[i]
-            print("Dict: \n{}\n\n".format(irma.decode_as_dict(code)))
-            print("String: \n{}\n\n".format(irma.decode_as_str(code)))
             irma_infos.append(irma.decode_as_dict(code))
   
         
     return render_template("query_result.html", 
-        zipped_input=zip([selected_image],input_info),#, input_code, input_info),
-     zipped_results= zip(image_names, image_distances, image_codes, irma_infos))
+        zipped_input=zip([image_names[0]],[image_codes[0]],[irma_infos[0]]),
+     zipped_results= zip(image_names[1:], image_distances[1:], image_codes[1:], irma_infos[1:]))
 
 @app.route("/recalc", methods=['POST'])
 def recalc_index():
@@ -108,26 +103,10 @@ def relevance_feedback():
         not_selected_images=data['nsi'].split(";")
         not_selected_images=not_selected_images[0:-1]
 
-
-       # selected_images,not_selected_images=request.form["si"],request.form["nsi"]
-        #data=request.form.get("lists")
-        
-        #selected_images, not_selected_images=request.form.get("selected_images"),request.form.get("not_selected_images")
-        print("Selected Images: ",selected_images)
-        print("Not selected Images: ",not_selected_images)
-
-
-        #for element in selected_images:
-         #   print("Selected Image: ",element)
-        #for element in not_selected_images:
-         #   print("Not selected Image: ",element)
-        
-        
+      
         feeback_result= relevance_feedback_idea.relevance_feedback(query,selected_images,not_selected_images)
  
-        #return jsonify(message)
-        #return 
-        #request.Response("/relevance_feedback")
+    
         return 'response',200 
 
 

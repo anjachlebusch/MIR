@@ -22,8 +22,10 @@
 
     <div class="col-sm-9">
       <h1 class="page-header">Input image</h1>
-      {%for image,info in zipped_input %}
+      {%for image,code,info in zipped_input %}
       <img src="{{url_for('static', filename='images/query/'+ image)}}" width="500" height="500">
+      <div>{{code}}</div>
+      <div>{{info}}</div>
       <!-- TODO: for -->
       {%endfor%} 
       <h1 class="page-header">Query results</h1>
@@ -103,8 +105,6 @@
       
       selected_images=selected_images+imageName+";"
       
-      alert("Selected Images: " + imageName);
-      alert("selected Liste: "+selected_images);
     }
 
     for (i=0;i<not_selected_divs.length;i++){
