@@ -48,7 +48,7 @@ def select_query_image():
 def start_query(limit=elements_per_page):
     global query
     query.set_image_name(query_image_name=selected_image)
-    query_result=query.run()
+    query_result=query.run(limit)
 
     return visualize_query(query_result)
 
@@ -84,18 +84,20 @@ def recalc_index():
 @app.route("/new_page", methods=['POST'])
 def new_page():
     global page
-    page+=1  
+    page=page+1  
     render_template("query_result.html", page=page)
     return start_query(page*elements_per_page)
 
 
 @app.route('/relevance_feedback', methods=['POST', 'GET'])
 def relevance_feedback():
+    global page
     global feeback_result
     global query
+    page=1
     if request.method == 'POST':
         data=request.get_json()
-        print(data)
+        
         
         selected_images=data['si'].split(";")
         selected_images=selected_images[0:-1]
